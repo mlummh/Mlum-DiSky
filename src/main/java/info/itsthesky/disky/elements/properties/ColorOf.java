@@ -28,15 +28,17 @@ public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 	static {
 		register(ColorOf.class,
 				Color.class,
-				"(embed|discord) colo[u]r",
+				"[embed|discord] colo[u]r",
 				"embedbuilder");
 	}
 
 	private boolean wasInScope;
+	private EmbedSection section;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		wasInScope = getParser().isCurrentSection(EmbedSection.class);
+		if (wasInScope) section = getParser().getCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
@@ -57,7 +59,7 @@ public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 		} else if (entity instanceof EmbedBuilder) {
 			((EmbedBuilder) entity).setColor(new java.awt.Color(color.asBukkitColor().asRGB()));
 			if (wasInScope)
-				EmbedSection.lastEmbed.setColor(new java.awt.Color(color.asBukkitColor().asRGB()));
+				section.getCurrentValue().setColor(new java.awt.Color(color.asBukkitColor().asRGB()));
 		}
 
 	}

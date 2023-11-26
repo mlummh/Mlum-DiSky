@@ -33,7 +33,7 @@ public abstract class ReturningSection<T> extends Section {
 	public abstract T createNewValue();
 
 	private T currentValue;
-	private Variable<T> variable;
+	protected Variable<T> variable;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
@@ -78,7 +78,7 @@ public abstract class ReturningSection<T> extends Section {
 		public Class<S> getSectionClass() {
 			return (Class<S>) ((ParameterizedType) getClass()
 					.getGenericSuperclass()).getActualTypeArguments()[1];
-		};
+		}
 
 		@Override
 		public @NotNull Class<? extends T> getReturnType() {

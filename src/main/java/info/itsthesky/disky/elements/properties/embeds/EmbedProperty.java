@@ -5,15 +5,12 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
 
 public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBuilder, T> {
@@ -24,11 +21,9 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 		register(clazz, entityClass, propertyName, "embedbuilder");
 	}
 
-	private boolean useScope;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-		useScope = ParserInstance.get().isCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
@@ -43,8 +38,6 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 			return;
 		final T entity = (T) delta[0];
 		set(builder, entity);
-		if (useScope)
-			set(EmbedSection.lastEmbed, entity);
 	}
 
 	public abstract void set(EmbedBuilder builder, T value);
