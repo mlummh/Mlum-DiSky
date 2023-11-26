@@ -40,7 +40,7 @@ dependencies {
 }
 
 shadowJar {
-    archiveName = 'DiSky ' + version + '.jar'
+    archiveName = 'mlum-DiSky ' + version + '.jar'
 }
 
 def targetJavaVersion = 8

@@ -1,20 +1,22 @@
 package info.itsthesky.disky.elements.sections;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.*;
-import ch.njol.skript.lang.parser.ParserInstance;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.TriggerItem;
+import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
+import info.itsthesky.disky.api.skript.ReturningSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 @Name("Embed Builder")
@@ -41,13 +43,38 @@ import java.util.List;
         "\t\t\tset footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
         "\t\t\tset timestamp of embed to now\n" +
         "\t\treply with last embed")
-public class EmbedSection extends Section {
+public class EmbedSection extends ReturningSection<EmbedBuilder> {
 
-    public static EmbedBuilder lastEmbed;
+    @Name("Last Embed Builder")
+    @Description("Represents the last embed builder created within a section.")
+    public static class embed extends LastBuilderExpression<EmbedBuilder, EmbedSection> { }
+
     private Expression<String> exprID;
 
     static {
-        Skript.registerSection(EmbedSection.class, "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
+        register(
+                EmbedSection.class,
+                EmbedBuilder.class,
+                embed.class,
+                "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
+    }
+
+    private String id;
+
+    @Override
+    protected @Nullable TriggerItem walk(@NotNull Event e) {
+        if (exprID != null) {
+            id = exprID.getSingle(e);
+        }
+        return super.walk(e);
+    }
+
+    @Override
+    public EmbedBuilder createNewValue() {
+        if (id != null) {
+            return new EmbedBuilder(EmbedManager.getTemplate(id));
+        }
+        return new EmbedBuilder();
     }
 
     @Override
@@ -59,19 +86,8 @@ public class EmbedSection extends Section {
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];
         loadOptionalCode(sectionNode);
+        variable = (Variable<EmbedBuilder>) exprs[1];
         return true;
-    }
-
-    @Override
-    protected @Nullable TriggerItem walk(@NotNull Event e) {
-        if (exprID != null) {
-            String id = exprID.getSingle(e);
-            if (id == null) lastEmbed = new EmbedBuilder();
-            lastEmbed = new EmbedBuilder(EmbedManager.getTemplate(id));
-        } else {
-            lastEmbed = new EmbedBuilder();
-        }
-        return walk(e, true);
     }
 
     @Override
