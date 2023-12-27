@@ -14,6 +14,7 @@ import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.MessageEvent;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -87,11 +88,14 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 		} else {
 			final MessageCreateBuilder builder;
 			if (message instanceof MessageCreateBuilder)
-				builder = (MessageCreateBuilder) message;
+				builder = StringUtils.escapeMessage((MessageCreateBuilder) message);
 			else if (message instanceof EmbedBuilder)
-				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
-			else
-				builder = new MessageCreateBuilder().setContent((String) message);
+				builder = new MessageCreateBuilder().addEmbeds((StringUtils.escapeEmbed((EmbedBuilder) message)).build());
+			else {
+				String msg;
+				msg = StringUtils.escapeString((String) message);
+				builder = new MessageCreateBuilder().setContent(msg);
+			}
 
 			if (e instanceof InteractionEvent) {
 				final InteractionEvent event = (InteractionEvent) e;
