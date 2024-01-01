@@ -67,9 +67,9 @@ public class StringUtils {
 
         embed.setTitle(escapeString(builtEmbed.getTitle()));
         embed.setDescription(escapeString(builtEmbed.getDescription()));
-        if (builtEmbed.getFooter() != null) {
-            embed.setFooter(escapeString(builtEmbed.getFooter().getText()));
-        }
+        // if (builtEmbed.getFooter() != null) {
+        //     embed.setFooter(escapeString(builtEmbed.getFooter().getText()));
+        // }
 
         Class<MessageEmbed.Field> clazz = MessageEmbed.Field.class;
         Field name;
