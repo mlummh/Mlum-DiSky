@@ -247,7 +247,7 @@ public class CommandFactory {
         String botString = ScriptLoader.replaceOptions(node.get("bots", ""));
         List<String> bots = botString.isEmpty() ? null : Arrays.asList(botString.split(listPattern));
 
-        List<ChannelType> places = parsePlaces(ScriptLoader.replaceOptions(node.get("executable in", "guild, dm")).split(listPattern));
+        List<ChannelType> places = parsePlaces(ScriptLoader.replaceOptions(node.get("executable in", "guild, threads")).split(listPattern));
 
         if (places == null) {
             return null;
