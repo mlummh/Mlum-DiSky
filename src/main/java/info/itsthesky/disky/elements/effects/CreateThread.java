@@ -77,6 +77,12 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
                 action = channel.createThreadChannel(name, message.getId());
             }
         }
-        action.queue(this::restart);
+        try {
+            ThreadChannel threadChannel = action.complete();
+            restart(threadChannel);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            restart();
+        }
     }
 }
