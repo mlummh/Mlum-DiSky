@@ -2,7 +2,6 @@ package info.itsthesky.disky.api.events;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
-import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
@@ -21,7 +20,7 @@ import java.util.function.Predicate;
 /**
  * Made by Blitz, minor edit by Sky for DiSky
  */
-public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends SelfRegisteringSkriptEvent {
+public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends SkriptEvent {
 
     /**
      * The ending appended to patterns if no custom ending is specified
@@ -29,7 +28,6 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     public static final String APPENDED_ENDING = "[seen by %-string%]";
     private final Map<Class<?>, Object> valueMap = new HashMap<>();
     private String stringRepresentation;
-    private Trigger trigger;
     private EventListener<D> listener;
     private String bot;
     private Class<? extends Event> bukkitClass;
@@ -115,15 +113,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     }
 
     @Override
-    public void afterParse(@NotNull Config config) {
-
-        ScriptLoader.setCurrentEvent(originalName, originalEvents);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void register(@NotNull Trigger t) {
-        trigger = t;
+    public boolean postLoad() {
         listener = new EventListener<>(jdaClass, JDAEvent -> {
             if (check(JDAEvent)) {
 
@@ -138,29 +128,27 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 event = eventWorkaround;
 
                 event.setJDAEvent(JDAEvent);
-                SkriptUtils.sync(() -> {
-                    if (getTrigger() != null) {
-                        getTrigger().execute(event);
-                    }
-                });
+
+                if (check(event)) {
+                    SkriptUtils.sync(() -> {
+                        if (getTrigger() != null) {
+                            getTrigger().execute(event);
+                        }
+                    });
+                }
 
             }
         }, checker());
         EventListener.addListener(listener);
+        return super.postLoad();
     }
 
     @Override
-    public void unregister(final @NotNull Trigger t) {
+    public void unload() {
         listener.enabled = false;
         EventListener.removeListener(listener);
         listener = null;
         trigger = null;
-    }
-
-    @Override
-    public void unregisterAll() {
-        if (trigger != null)
-            unregister(trigger);
     }
 
     @Override
@@ -183,6 +171,11 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
      */
     public boolean check(D event) {
         return bot == null || bot.equalsIgnoreCase(DiSky.getManager().getJDAName(event.getJDA()));
+    }
+
+    @Override
+    public boolean check(@NotNull Event event) {
+        return true;
     }
 
     public Class<? extends Event> getBukkitClass() {

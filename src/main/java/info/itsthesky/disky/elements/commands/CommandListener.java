@@ -2,10 +2,13 @@ package info.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.localization.Language;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -79,6 +82,14 @@ public class CommandListener extends ListenerAdapter {
                                 event.setArguments(content.substring((usedCommand).length() + 1));
                             } catch (StringIndexOutOfBoundsException e1) {
                                 event.setArguments(null);
+                            }
+
+                            if (!((event).getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID")))) {
+                                if (!(event.getCommand().getCategory().equals("global") || event.getCommand().getCategory().equals("global only"))) {
+                                    return;
+                                }
+                            } else if (event.getCommand().getCategory().equals("global only")) {
+                                return;
                             }
                             // Because most of bukkit's apis are sync only, make sure to run this on bukkit's thread
                             SkriptUtils.sync(() -> {

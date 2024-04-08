@@ -5,21 +5,28 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageCommandEvent extends DiSkyEvent<MessageContextInteractionEvent> {
@@ -57,6 +64,14 @@ public class MessageCommandEvent extends DiSkyEvent<MessageContextInteractionEve
 
 		SkriptUtils.registerValue(BukkitMessageCommandEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
+	}
+
+	@Override
+	public boolean check(@NotNull Event event) {
+		if (!((BukkitMessageCommandEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+			return false;
+		}
+		return super.check(event);
 	}
 
 	@Name("Target Message")

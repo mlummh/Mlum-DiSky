@@ -1,5 +1,8 @@
 package info.itsthesky.disky.elements.events.messages;
 
+import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SkriptParser;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -15,12 +18,14 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 
 public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 
 	static {
 		register("Message Receive", MessageEvent.class, BukkitMessageEvent.class,
-				"message receive[d]")
+				"[:global] message receive[d]")
 				.description("Fired when any bot receive an actual message.",
 						"This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
 				.examples("on message received:",
@@ -53,6 +58,23 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 
 		SkriptUtils.registerValue(BukkitMessageEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
+	}
+
+	private boolean globalEvent;
+
+	@Override
+	public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, SkriptParser.@NotNull ParseResult parser) {
+		globalEvent = parser.hasTag("global");
+		return super.init(exprs, matchedPattern, parser);
+	}
+
+	@Override
+	public boolean check(@NotNull Event event) {
+		if (!super.check(event)) return false;
+		if (!((BukkitMessageEvent) event).getJDAEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+			return globalEvent;
+		}
+		return !globalEvent;
 	}
 
 	public static class BukkitMessageEvent extends SimpleDiSkyEvent<MessageReceivedEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

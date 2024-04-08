@@ -8,6 +8,7 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.sections.SecLoop;
 import ch.njol.skript.sections.SecWhile;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
@@ -15,11 +16,15 @@ import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.JDAUtils;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -63,6 +68,14 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 
 		SkriptUtils.registerValue(BukkitSlashCompletionEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? ((MessageChannelUnion) event.getJDAEvent().getChannel()).asPrivateChannel() : null);
+	}
+
+	@Override
+	public boolean check(@NotNull Event event) {
+		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+			return false;
+		}
+		return super.check(event);
 	}
 
 	public static class Return extends Effect {

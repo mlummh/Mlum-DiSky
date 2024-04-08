@@ -5,6 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
@@ -20,7 +21,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
@@ -65,6 +65,14 @@ public class EntityDropdownClickEvent extends DiSkyEvent<EntitySelectInteraction
 
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
+	}
+
+	@Override
+	public boolean check(@NotNull Event event) {
+		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+			return false;
+		}
+		return super.check(event);
 	}
 
 	@Name("Selected Entities")
