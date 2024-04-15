@@ -71,6 +71,7 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 	@Override
 	public boolean check(@NotNull Event event) {
 		if (!super.check(event)) return false;
+		if (!((BukkitMessageEvent) event).isFromGuild()) return false;
 		if (!((BukkitMessageEvent) event).getJDAEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return globalEvent;
 		}

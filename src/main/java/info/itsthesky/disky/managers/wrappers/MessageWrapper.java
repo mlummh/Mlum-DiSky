@@ -13,7 +13,7 @@ public class MessageWrapper extends ReceivedMessage {
 				message.getChannelIdLong(),
 				message.getGuildIdLong(),
 				message.getJDA(),
-				message.getGuild(),
+				message.isFromGuild() ? message.getGuild() : null ,
 				message.getChannel(),
 				message.getType(),
 				message.getMessageReference(),

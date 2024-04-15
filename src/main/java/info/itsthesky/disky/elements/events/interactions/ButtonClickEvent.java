@@ -65,6 +65,7 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitButtonClickEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitButtonClickEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

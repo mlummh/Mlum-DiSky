@@ -66,6 +66,7 @@ public class UserCommandEvent extends DiSkyEvent<UserContextInteractionEvent> {
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitUserCommandEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitUserCommandEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

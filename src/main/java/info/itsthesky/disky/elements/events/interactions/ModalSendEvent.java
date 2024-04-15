@@ -57,6 +57,7 @@ public class ModalSendEvent extends DiSkyEvent<ModalInteractionEvent> {
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitModalSendEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitModalSendEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

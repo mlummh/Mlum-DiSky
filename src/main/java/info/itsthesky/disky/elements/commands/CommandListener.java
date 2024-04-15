@@ -83,7 +83,7 @@ public class CommandListener extends ListenerAdapter {
                             } catch (StringIndexOutOfBoundsException e1) {
                                 event.setArguments(null);
                             }
-
+                            if (!event.isFromGuild()) return;
                             if (!((event).getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID")))) {
                                 if (!(event.getCommand().getCategory().equals("global") || event.getCommand().getCategory().equals("global only"))) {
                                     return;

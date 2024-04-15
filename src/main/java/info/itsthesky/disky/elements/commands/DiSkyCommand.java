@@ -85,6 +85,7 @@ public class DiSkyCommand extends SkriptEvent {
 
     @Override
     public boolean check(@NotNull Event event) {
+        if (!((EvtDiSkyCommand) event).jdaEvent.isFromGuild()) return false;
         if (!((EvtDiSkyCommand) event).jdaEvent.getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
             return ((EvtDiSkyCommand) event).command.getCategory().equals("global") || ((EvtDiSkyCommand) event).command.getCategory().equals("global only");
         }

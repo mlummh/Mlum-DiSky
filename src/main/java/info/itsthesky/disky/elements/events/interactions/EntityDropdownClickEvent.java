@@ -69,6 +69,7 @@ public class EntityDropdownClickEvent extends DiSkyEvent<EntitySelectInteraction
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

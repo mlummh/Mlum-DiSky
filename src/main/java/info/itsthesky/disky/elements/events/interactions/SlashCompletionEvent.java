@@ -72,6 +72,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

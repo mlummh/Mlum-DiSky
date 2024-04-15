@@ -73,6 +73,7 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitSlashCommandReceiveEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitSlashCommandReceiveEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}

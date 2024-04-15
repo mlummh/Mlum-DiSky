@@ -68,6 +68,7 @@ public class MessageCommandEvent extends DiSkyEvent<MessageContextInteractionEve
 
 	@Override
 	public boolean check(@NotNull Event event) {
+		if (!((BukkitMessageCommandEvent) event).getInteractionEvent().isFromGuild()) return false;
 		if (!((BukkitMessageCommandEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
 			return false;
 		}
