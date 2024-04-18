@@ -8,7 +8,6 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
 import info.itsthesky.disky.api.skript.ReturningSection;
@@ -56,25 +55,19 @@ public class EmbedSection extends ReturningSection<EmbedBuilder> {
                 EmbedSection.class,
                 EmbedBuilder.class,
                 embed.class,
-                "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
+                "make [a] [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]"
+        );
     }
 
-    private String id;
-
     @Override
-    protected @Nullable TriggerItem walk(@NotNull Event e) {
+    public EmbedBuilder createNewValue(@NotNull Event event) {
         if (exprID != null) {
-            id = exprID.getSingle(e);
-        }
-        return super.walk(e);
-    }
-
-    @Override
-    public EmbedBuilder createNewValue() {
-        if (id != null) {
+            String id = exprID.getSingle(event);
+            if (id == null) return new EmbedBuilder();
             return new EmbedBuilder(EmbedManager.getTemplate(id));
+        } else {
+            return new EmbedBuilder();
         }
-        return new EmbedBuilder();
     }
 
     @Override
@@ -85,9 +78,7 @@ public class EmbedSection extends ReturningSection<EmbedBuilder> {
                         @Nullable SectionNode sectionNode,
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];
-        loadOptionalCode(sectionNode);
-        variable = (Variable<EmbedBuilder>) exprs[1];
-        return true;
+        return super.init(exprs, matchedPattern, isDelayed, parseResult, sectionNode, triggerItems);
     }
 
     @Override

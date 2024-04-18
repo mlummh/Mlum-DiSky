@@ -3,8 +3,8 @@ package info.itsthesky.disky.api.emojis;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.emoji.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +84,12 @@ public class Emote implements IMentionable {
 
     @Override
     public @NotNull String getAsMention() {
-        return emoji.getAsReactionCode();
+        if (isCustom()) {
+            return "<" + (isAnimated() ? "a" : "") + ":"
+                    + getName() + ":" + getID() + ">";
+        } else {
+            return getName();
+        }
     }
 
     @Override
