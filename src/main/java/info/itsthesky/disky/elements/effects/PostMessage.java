@@ -8,7 +8,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.Variable;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -39,27 +38,30 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
 	private Expression<Channel> exprChannel;
+	private Expression<Message> exprReference;
+	private Expression<Object> exprResult;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		this.exprMessage = (Expression<Object>) expressions[0];
 		this.exprChannel = (Expression<Channel>) expressions[1];
-		setChangedVariable((Variable<Message>) expressions[2]);
-		return true;
+		this.exprReference = (Expression<Message>) expressions[2];
+		this.exprResult = (Expression<Object>) expressions[3];
+		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
 	}
 
 	@Override
 	public void execute(@NotNull Event e) {
 		final Object message = parseSingle(exprMessage, e);
 		final Channel channel = parseSingle(exprChannel, e);
-		if (message == null || channel == null) {
-			restart();
+		final @Nullable Message reference = parseSingle(exprReference, e);
+		if (message == null || channel == null)
 			return;
 
 		if (!MessageChannel.class.isAssignableFrom(channel.getClass())) {
@@ -87,10 +89,17 @@ public class PostMessage extends AsyncEffect {
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
 
-			((MessageChannel) channel).sendMessage(builder.build()).queue(this::restart, ex -> {
-				DiSky.getErrorHandler().exception(e, ex);
-				restart();
-			});
+			action = ((MessageChannel) channel).sendMessage(builder.build())
+					.setMessageReference(reference)
+					.setPoll(builder.getPoll());
+		}
+
+		final Message finalMessage;
+		try {
+			finalMessage = action.complete();
+		} catch (Exception ex) {
+			DiSky.getErrorHandler().exception(e, ex);
+			return;
 		}
 
 		if (exprResult == null)
