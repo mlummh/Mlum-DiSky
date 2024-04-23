@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+import static info.itsthesky.disky.api.skript.EasyElement.*;
 
 @Name("Move Member")
 @Description({"Move a member to another voice chat.",
@@ -27,7 +27,8 @@ public class MoveMember extends AsyncEffect {
     static {
         Skript.registerEffect(
                 MoveMember.class,
-                "[voice] move [the] discord [member] %member% to [a] [voice[( |-)channel]] %voicechannel%"
+                "[voice] move [the] discord [member] %member% to [a] [voice[( |-)channel]] %voicechannel%",
+                "[voice] disconnect [the] discord [member] %member%"
         );
     }
 
@@ -49,7 +50,7 @@ public class MoveMember extends AsyncEffect {
         final Member member = parseSingle(exprMember, e, null);
         final VoiceChannel voice = parseSingle(exprVoiceChannel, e, null);
 
-        if (member == null || voice == null) {
+        if (member == null) {
             return;
         }
 

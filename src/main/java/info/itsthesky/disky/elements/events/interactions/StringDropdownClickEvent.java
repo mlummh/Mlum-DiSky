@@ -8,6 +8,7 @@ import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.MultipleGetterExpression;
@@ -24,6 +25,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
@@ -56,6 +58,8 @@ public class StringDropdownClickEvent extends DiSkyEvent<StringSelectInteraction
 				event -> event.getJDAEvent().getComponent().getId());
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
+		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, ComponentInteraction.class,
+				event -> event.getJDAEvent().getInteraction());
 
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
@@ -114,7 +118,7 @@ public class StringDropdownClickEvent extends DiSkyEvent<StringSelectInteraction
 		}
 	}
 
-	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<StringSelectInteractionEvent> implements ModalEvent, InteractionEvent {
+	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<StringSelectInteractionEvent> implements ModalEvent, ComponentInteractionEvent {
 		public BukkitDropdownClickEvent(StringDropdownClickEvent event) {}
 
 		@Override

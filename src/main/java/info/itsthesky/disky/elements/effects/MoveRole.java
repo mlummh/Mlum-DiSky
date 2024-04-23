@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+import static info.itsthesky.disky.api.skript.EasyElement.*;
 
 @Name("Move Role Above/Under Role")
 @Description({"Move a specific role above or under another role within the same guild.",

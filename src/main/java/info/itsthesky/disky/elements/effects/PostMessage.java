@@ -8,6 +8,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.Variable;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -19,6 +20,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,27 +39,27 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-~objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
 	private Expression<Channel> exprChannel;
-	private Expression<Object> exprResult;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		this.exprMessage = (Expression<Object>) expressions[0];
 		this.exprChannel = (Expression<Channel>) expressions[1];
-		this.exprResult = (Expression<Object>) expressions[2];
-		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
+		setChangedVariable((Variable<Message>) expressions[2]);
+		return true;
 	}
 
 	@Override
 	public void execute(@NotNull Event e) {
 		final Object message = parseSingle(exprMessage, e);
 		final Channel channel = parseSingle(exprChannel, e);
-		if (message == null || channel == null)
+		if (message == null || channel == null) {
+			restart();
 			return;
 
 		if (!MessageChannel.class.isAssignableFrom(channel.getClass())) {
@@ -80,18 +82,15 @@ public class PostMessage extends AsyncEffect {
 				builder = (MessageCreateBuilder) message;
 			else if (message instanceof EmbedBuilder)
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+			else if (message instanceof MessagePollBuilder)
+				builder = new MessageCreateBuilder().setPoll(((MessagePollBuilder) message).build());
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
 
-			action = ((MessageChannel) channel).sendMessage(builder.build());
-		}
-
-		final Message finalMessage;
-		try {
-			finalMessage = action.complete();
-		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
-			return;
+			((MessageChannel) channel).sendMessage(builder.build()).queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
 		}
 
 		if (exprResult == null)

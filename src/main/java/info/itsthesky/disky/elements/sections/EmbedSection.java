@@ -11,7 +11,9 @@ import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
 import info.itsthesky.disky.api.skript.ReturningSection;
+import info.itsthesky.disky.elements.sections.message.CreateMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,8 +46,6 @@ import java.util.List;
         "\t\treply with last embed")
 public class EmbedSection extends ReturningSection<EmbedBuilder> {
 
-    @Name("Last Embed Builder")
-    @Description("Represents the last embed builder created within a section.")
     public static class embed extends LastBuilderExpression<EmbedBuilder, EmbedSection> { }
 
     private Expression<String> exprID;

@@ -1,5 +1,6 @@
 package info.itsthesky.disky.api.skript;
 
+import ch.njol.skript.util.AsyncEffect;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;

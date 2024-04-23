@@ -22,8 +22,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
@@ -74,7 +75,7 @@ public class Types {
         new DiSkyType<>(Channel.class, "channel",
                 Channel::getName,
                 null).eventExpression().register();
-        new DiSkyType<>(InteractionHook.class, "interactionhook",
+        new DiSkyType<>(ComponentInteraction.class, "interaction",
                 null, null).eventExpression().register();
         new DiSkyType<>(GuildChannel.class, "guildchannel",
                 Channel::getName,
@@ -229,12 +230,16 @@ public class Types {
                 MessageEmbed.Field::getValue,
                 null
         ).eventExpression().register();
-        new DiSkyType<>(MessagePollBuilder.class, "messagepoll",
+        new DiSkyType<>(MessagePollBuilder.class, "messagepollbuilder",
                 v -> "a discord poll",
                 null
         ).eventExpression().register();
-        new DiSkyType<>(PollAnswerData.class, "messagepollanswer",
+        new DiSkyType<>(PollAnswerData.class, "pollanswer",
                 PollAnswerData::asString,
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(MessagePoll.class, "messagepoll",
+                v -> v.getQuestion().getText(),
                 null
         ).eventExpression().register();
 
@@ -291,6 +296,9 @@ public class Types {
                 member -> member.getInstance().getSelfUser().getEffectiveName(),
                 input -> DiSky.getManager().fromName(input))
                 .eventExpression()
+                .register();
+        new DiSkyType<>(ApplicationInfo.class, "applicationinfo",
+                ApplicationInfo::getName, null).eventExpression()
                 .register();
         DiSkyType.fromEnum(Member.MemberFlag.class, "memberflag", "memberflag")
                 .eventExpression()
