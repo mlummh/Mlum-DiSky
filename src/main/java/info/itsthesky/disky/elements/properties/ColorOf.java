@@ -12,7 +12,6 @@ import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.event.Event;

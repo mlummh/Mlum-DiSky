@@ -1,7 +1,6 @@
 package info.itsthesky.disky.elements.properties.threads;
 
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import info.itsthesky.disky.api.skript.PropertyCondition;

@@ -4,7 +4,6 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
-import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Guild;

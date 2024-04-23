@@ -1,7 +1,6 @@
 package info.itsthesky.disky.api.events;
 
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;

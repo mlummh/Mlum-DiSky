@@ -8,7 +8,6 @@ import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.NodeInformation;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

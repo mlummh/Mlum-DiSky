@@ -13,7 +13,6 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -21,7 +20,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Edit Message")
 @Description({"Edit a specific message/interaction hook to show a new rich or simple message.",

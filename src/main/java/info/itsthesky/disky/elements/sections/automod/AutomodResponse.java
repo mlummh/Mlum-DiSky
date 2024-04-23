@@ -5,21 +5,13 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import info.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
-import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

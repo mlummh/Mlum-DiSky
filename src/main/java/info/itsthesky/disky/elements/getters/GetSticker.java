@@ -11,7 +11,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

@@ -11,8 +11,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.managers.BotManager;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

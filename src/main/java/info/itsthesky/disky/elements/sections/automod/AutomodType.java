@@ -2,17 +2,13 @@ package info.itsthesky.disky.elements.sections.automod;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.elements.sections.message.CreateMessage;
 import info.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.entities.automod.build.AutoModRuleData;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

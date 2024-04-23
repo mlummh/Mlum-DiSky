@@ -1,7 +1,6 @@
 package info.itsthesky.disky.core;
 
 import ch.njol.util.NonNullPair;
-import com.google.common.collect.Lists;
 import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -12,11 +11,13 @@ import org.bukkit.event.Event;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public final class Utils {
