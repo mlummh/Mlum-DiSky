@@ -127,7 +127,7 @@ public class ReplyWith extends AsyncEffect {
 		} else {
 			final MessageCreateBuilder builder;
 			if (message instanceof MessageCreateBuilder)
-				builder = StringUtils.escapeMessage((MessageCreateBuilder) message);
+				builder = (MessageCreateBuilder) message;
 			else if (message instanceof EmbedBuilder)
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
 			else if (message instanceof MessagePollBuilder)
@@ -140,6 +140,8 @@ public class ReplyWith extends AsyncEffect {
 				SkriptUtils.error(node, "The provided message is not valid!");
 				return;
 			}
+
+			StringUtils.escapeMessage(builder); // Replace all _ with \_ and all \_ with _
 
 			if (e instanceof InteractionEvent) {
 				final InteractionEvent event = (InteractionEvent) e;
