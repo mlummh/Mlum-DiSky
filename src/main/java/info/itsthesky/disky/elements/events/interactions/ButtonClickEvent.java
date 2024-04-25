@@ -1,5 +1,7 @@
 package info.itsthesky.disky.elements.events.interactions;
 
+import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SkriptParser;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -28,7 +30,7 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 
 	static {
 		register("Button Click", ButtonClickEvent.class, BukkitButtonClickEvent.class,
-				"button click[ed]")
+				"[:global] button click[ed]")
 				.description("Fired when any button sent by the button is clicked.",
 						"Use 'event-button' to get the button id. Don't forget to either reply or defer the interaction.",
 						"Modal can be shown in this interaction.");
@@ -63,13 +65,22 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
+	private boolean globalEvent;
+
+	@Override
+	public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, SkriptParser.@NotNull ParseResult parser) {
+		globalEvent = parser.hasTag("global");
+		return super.init(exprs, matchedPattern, parser);
+	}
+
 	@Override
 	public boolean check(@NotNull Event event) {
-		if (!((BukkitButtonClickEvent) event).getInteractionEvent().isFromGuild()) return false;
-		if (!((BukkitButtonClickEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
-			return false;
+		if (!super.check(event)) return false;
+		if (!((BukkitButtonClickEvent) event).isFromGuild()) return globalEvent;
+		if (!((BukkitButtonClickEvent) event).getJDAEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+			return globalEvent;
 		}
-		return super.check(event);
+		return !globalEvent;
 	}
 
 	public static class BukkitButtonClickEvent extends SimpleDiSkyEvent<ButtonInteractionEvent> implements ModalEvent, ComponentInteractionEvent {
