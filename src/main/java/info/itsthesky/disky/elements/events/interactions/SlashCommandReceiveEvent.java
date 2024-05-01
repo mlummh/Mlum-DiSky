@@ -35,6 +35,8 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteractionEvent> {
 
 	static {
@@ -95,12 +97,13 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 					ArgValue.class,
 					Object.class,
 					ExpressionType.COMBINED,
-					"[the] arg[ument] [(named|with name)] %string% as %optiontype%"
+					"[the] arg[ument] [(named|with name)] %string% as (%-optiontype%|:member)"
 			);
 		}
 
 		private Expression<String> exprName;
 		private OptionType type;
+		private boolean isMember;
 
 		@Override
 		@SuppressWarnings("ALL")
@@ -109,10 +112,16 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 				return false;
 
 			exprName = (Expression<String>) exprs[0];
-			type = ((Expression<OptionType>) exprs[1]).getSingle(null);
-			if (type == null) {
-				Skript.error("You must provide a literal (= constant) value for the option type.");
-				return false;
+			isMember = parseResult.hasTag("member");
+
+			if (!isMember) {
+				type = ((Expression<OptionType>) exprs[1]).getSingle(null);
+				if (type == null) {
+					Skript.error("You must provide a literal (= constant) value for the option type.");
+					return false;
+				}
+			} else {
+				type = OptionType.USER;
 			}
 			return true;
 		}
@@ -137,7 +146,17 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 			if (option == null)
 				return null;
 
-			return JDAUtils.parseOptionValue(option);
+			if (isMember) {
+				final User user = option.getAsUser();
+				if (!e.getJDAEvent().isFromGuild()) {
+					Skript.error("You cannot get a member from a private channel slash command.");
+					return null;
+				}
+
+				return Objects.requireNonNull(e.getJDAEvent().getGuild()).getMember(user);
+			} else {
+				return JDAUtils.parseOptionValue(option);
+			}
 		}
 
 		@Override
