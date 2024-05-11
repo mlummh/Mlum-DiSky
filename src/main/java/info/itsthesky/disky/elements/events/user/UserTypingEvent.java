@@ -6,6 +6,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class UserTypingEvent extends DiSkyEvent<net.dv8tion.jda.api.events.user.UserTypingEvent> {
 
@@ -26,6 +27,9 @@ public class UserTypingEvent extends DiSkyEvent<net.dv8tion.jda.api.events.user.
 
         SkriptUtils.registerValue(UserTypingEvent.BukkitUserTypingEvent.class, Member.class,
                 event -> event.getJDAEvent().getMember(), 0);
+
+        SkriptUtils.registerValue(UserTypingEvent.BukkitUserTypingEvent.class, MessageChannel.class,
+                event -> event.getJDAEvent().getChannel(), 0);
     }
 
     public static class BukkitUserTypingEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.user.UserTypingEvent> {

@@ -19,10 +19,10 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.events.EventValue;
-import info.itsthesky.disky.elements.events.ExprEventValues;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
+import info.itsthesky.disky.elements.events.ExprEventValues;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -255,10 +255,21 @@ public final class SkriptUtils {
         ParserInstance.get().setNode(previous);
     }
 
+    public static void warning(Node node, String message) {
+        final Node previous = ParserInstance.get().getNode();
+        ParserInstance.get().setNode(node);
+        Skript.warning(message);
+        ParserInstance.get().setNode(previous);
+    }
+
     public static Date convertDateTime(@Nullable OffsetDateTime dateTime) {
         if (dateTime == null)
             return null;
 
         return new Date(dateTime.toInstant().toEpochMilli());
+    }
+
+    public static void dispatchEvent(Event e) {
+        SkriptUtils.sync(() -> Bukkit.getPluginManager().callEvent(e));
     }
 }
