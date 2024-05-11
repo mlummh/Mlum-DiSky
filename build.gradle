@@ -7,7 +7,7 @@ group = 'info.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '16'
+def minor = '17'
 def patch = '0'
 
 def channel = ''
@@ -45,7 +45,7 @@ shadowJar {
     minimize()
 }
 
-def targetJavaVersion = 8
+def targetJavaVersion = 11
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

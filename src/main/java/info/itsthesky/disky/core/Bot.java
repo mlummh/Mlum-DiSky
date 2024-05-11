@@ -3,6 +3,7 @@ package info.itsthesky.disky.core;
 import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -27,6 +28,7 @@ public class Bot {
     private final @Nullable BotApplication application;
     private final boolean forceReload;
     private final BotOptions options;
+    private final SlashManager slashManager;
 
     public Bot(String name, JDA instance, BotOptions options, @Nullable BotApplication application, boolean forceReload) {
         this.name = name;
@@ -35,6 +37,8 @@ public class Bot {
         this.forceReload = forceReload;
         this.startedTime = System.currentTimeMillis();
         this.options = options;
+
+        this.slashManager = SlashManager.getManager(this);
     }
 
     public String getName() {
@@ -106,5 +110,9 @@ public class Bot {
 
     public static @Nullable Bot byJDA(JDA instance) {
         return DiSky.getManager().fromJDA(instance);
+    }
+
+    public SlashManager getSlashManager() {
+        return slashManager;
     }
 }
