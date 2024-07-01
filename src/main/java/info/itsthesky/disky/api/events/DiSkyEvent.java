@@ -2,12 +2,17 @@ package info.itsthesky.disky.api.events;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +25,7 @@ import java.util.function.Predicate;
 /**
  * Made by Blitz, minor edit by Sky for DiSky
  */
-public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends SkriptEvent {
+public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends SelfRegisteringSkriptEvent {
 
     /**
      * The ending appended to patterns if no custom ending is specified
@@ -28,6 +33,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     public static final String APPENDED_ENDING = "[seen by %-string%]";
     private final Map<Class<?>, Object> valueMap = new HashMap<>();
     private String stringRepresentation;
+    private Trigger trigger;
     private EventListener<D> listener;
     private String bot;
     private Class<? extends Event> bukkitClass;
@@ -66,6 +72,10 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
      * <br> Return true by default and execute the event given either it complete specifics conditions or not.
      */
     protected Predicate<D> checker() {
+        return e -> true;
+    }
+
+    protected Predicate<GuildAuditLogEntryCreateEvent> logChecker() {
         return e -> true;
     }
 
@@ -113,8 +123,16 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     }
 
     @Override
-    public boolean postLoad() {
-        listener = new EventListener<>(jdaClass, JDAEvent -> {
+    public void afterParse(@NotNull Config config) {
+
+        ScriptLoader.setCurrentEvent(originalName, originalEvents);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void register(@NotNull Trigger t) {
+        trigger = t;
+        listener = new EventListener<>(jdaClass, (JDAEvent, auditLogEntryCreateEvent) -> {
             if (check(JDAEvent)) {
 
                 /* !? */
@@ -130,6 +148,8 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 event.setJDAEvent(JDAEvent);
 
                 if (check(event)) {
+                event.setLogEvent(auditLogEntryCreateEvent);
+
                     SkriptUtils.sync(() -> {
                         if (getTrigger() != null) {
                             getTrigger().execute(event);
@@ -138,17 +158,25 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 }
 
             }
-        }, checker());
+        }, checker(), logChecker(), getLogType());
         EventListener.addListener(listener);
-        return super.postLoad();
     }
 
     @Override
-    public void unload() {
-        listener.enabled = false;
-        EventListener.removeListener(listener);
+    public void unregister(final @NotNull Trigger t) {
+        if (listener != null) {
+            listener.enabled = false;
+            EventListener.removeListener(listener);
+        }
+
         listener = null;
         trigger = null;
+    }
+
+    @Override
+    public void unregisterAll() {
+        if (trigger != null)
+            unregister(trigger);
     }
 
     @Override
@@ -176,6 +204,10 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     @Override
     public boolean check(@NotNull Event event) {
         return true;
+    }
+
+    public @Nullable ActionType getLogType() {
+        return null;
     }
 
     public Class<? extends Event> getBukkitClass() {

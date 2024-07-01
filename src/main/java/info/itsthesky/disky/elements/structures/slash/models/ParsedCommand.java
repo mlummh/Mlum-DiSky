@@ -1,12 +1,13 @@
 package info.itsthesky.disky.elements.structures.slash.models;
 
 import ch.njol.skript.lang.Trigger;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class ParsedCommand {
     private Trigger onCooldown;
 
     private Trigger trigger;
+    private @Nullable ParsedGroup group;
 
     // ------------------------------------------------------------
 
@@ -42,6 +44,14 @@ public class ParsedCommand {
 
     public void setArguments(List<ParsedArgument> arguments) {
         this.arguments = arguments;
+    }
+
+    public @Nullable ParsedGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(@Nullable ParsedGroup group) {
+        this.group = group;
     }
 
     public String getDescription() {
@@ -137,20 +147,17 @@ public class ParsedCommand {
     }
 
     public boolean shouldUpdate(ParsedCommand command) {
-        return !this.equals(command)
-                || !this.getArguments().equals(command.getArguments())
-                || !this.getDescription().equals(command.getDescription())
-                || !this.getName().equals(command.getName())
-                || !this.getEnabledFor().equals(command.getEnabledFor())
-                || this.isDisabledByDefault() != command.isDisabledByDefault();
-                /*|| !this.getBots().equals(command.getBots())
-                || !this.getGuilds().equals(command.getGuilds());*/
+        return true;
     }
 
     public void prepareArguments(List<OptionMapping> options) {
-        for (int i = 0; i < options.size(); i++) {
-            final OptionMapping option = options.get(i);
-            final ParsedArgument argument = arguments.get(i);
+        DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
+        for (ParsedArgument argument : arguments) {
+            final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
+            if (option == null) {
+                argument.setValue(null);
+                continue;
+            }
 
             argument.setValue(JDAUtils.parseOptionValue(option));
         }

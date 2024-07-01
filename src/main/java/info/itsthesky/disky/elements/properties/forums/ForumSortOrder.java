@@ -1,50 +1,41 @@
 package info.itsthesky.disky.elements.properties.forums;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import info.itsthesky.disky.api.emojis.Emote;
+import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
+import net.dv8tion.jda.api.entities.channel.attribute.IPostContainer;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Default Forum Emoji")
-@Description({"Represent the default emoji of a forum channel.",
-"It's the mote that is added automatically once a new post is created.",
-"Can return none and can be changed."})
-@Examples("set default emoji of event-forumchannel to reaction \"smile\"")
-public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
+public class ForumSortOrder extends SimplePropertyExpression<ForumChannel, String>
 		implements IAsyncChangeableExpression {
 
 	static {
-		register(DefaultEmoji.class, Emote.class,
-				"default [forum] emoji",
+		register(ForumSortOrder.class, String.class,
+				"[forum] [default] sort order",
 				"forumchannel"
 		);
 	}
 
 	@Override
-	public @Nullable Emote convert(ForumChannel forumChannel) {
-		if (forumChannel.getDefaultReaction() == null)
-			return null;
-
-		return new Emote(forumChannel.getDefaultReaction());
+	public @Nullable String convert(ForumChannel forumChannel) {
+		return forumChannel.getDefaultSortOrder().name().toLowerCase();
 	}
 
 	@Override
-	public @NotNull Class<? extends Emote> getReturnType() {
-		return Emote.class;
+	public @NotNull Class<? extends String> getReturnType() {
+		return String.class;
 	}
 
 	@Override
 	protected @NotNull String getPropertyName() {
-		return "default forum emoji";
+		return "forum default sort order";
 	}
 
 	@Override
@@ -60,7 +51,7 @@ public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
 	@Override
 	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
 		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.DELETE)
-			return new Class[] {Emote.class};
+			return new Class[] {String.class};
 		return new Class[0];
 	}
 
@@ -75,12 +66,20 @@ public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
 				if (!EasyElement.isValid(delta) || delta[0] == null)
 					return;
 
-				Emote emote = (Emote) delta[0];
-				action = channel.getManager().setDefaultReaction(emote.getEmoji());
+				String rawLayout = (String) delta[0];
+				IPostContainer.SortOrder sortOrder;
+
+				sortOrder = ReflectionUtils.parseEnum(IPostContainer.SortOrder.class, rawLayout);
+				if (sortOrder == null) {
+					Skript.error("The sort order named '" + rawLayout + "' doesn't exist!");
+					return;
+				}
+
+				action = channel.getManager().setDefaultSortOrder(sortOrder);
 				break;
 			case RESET:
 			case DELETE:
-				action = channel.getManager().setDefaultReaction(null);
+				action = channel.getManager().setDefaultSortOrder(IPostContainer.SortOrder.RECENT_ACTIVITY);
 				break;
 			default:
 				return;

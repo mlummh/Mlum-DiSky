@@ -1,10 +1,12 @@
 package info.itsthesky.disky.elements.properties.forums;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
@@ -14,37 +16,29 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Default Forum Emoji")
-@Description({"Represent the default emoji of a forum channel.",
-"It's the mote that is added automatically once a new post is created.",
-"Can return none and can be changed."})
-@Examples("set default emoji of event-forumchannel to reaction \"smile\"")
-public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
+public class ForumLayout extends SimplePropertyExpression<ForumChannel, String>
 		implements IAsyncChangeableExpression {
 
 	static {
-		register(DefaultEmoji.class, Emote.class,
-				"default [forum] emoji",
+		register(ForumLayout.class, String.class,
+				"[forum] [display] layout",
 				"forumchannel"
 		);
 	}
 
 	@Override
-	public @Nullable Emote convert(ForumChannel forumChannel) {
-		if (forumChannel.getDefaultReaction() == null)
-			return null;
-
-		return new Emote(forumChannel.getDefaultReaction());
+	public @Nullable String convert(ForumChannel forumChannel) {
+		return forumChannel.getDefaultLayout().name().toLowerCase();
 	}
 
 	@Override
-	public @NotNull Class<? extends Emote> getReturnType() {
-		return Emote.class;
+	public @NotNull Class<? extends String> getReturnType() {
+		return String.class;
 	}
 
 	@Override
 	protected @NotNull String getPropertyName() {
-		return "default forum emoji";
+		return "forum layout";
 	}
 
 	@Override
@@ -60,7 +54,7 @@ public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
 	@Override
 	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
 		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.DELETE)
-			return new Class[] {Emote.class};
+			return new Class[] {String.class};
 		return new Class[0];
 	}
 
@@ -75,12 +69,22 @@ public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>
 				if (!EasyElement.isValid(delta) || delta[0] == null)
 					return;
 
-				Emote emote = (Emote) delta[0];
-				action = channel.getManager().setDefaultReaction(emote.getEmoji());
+				String rawLayout = (String) delta[0];
+				ForumChannel.Layout layout;
+
+				layout = ReflectionUtils.parseEnum(ForumChannel.Layout.class, rawLayout);
+				if (layout == null)
+					layout = ReflectionUtils.parseEnum(ForumChannel.Layout.class, rawLayout + "_view");
+				if (layout == null) {
+					Skript.error("The layout named '" + rawLayout + "' doesn't exist!");
+					return;
+				}
+
+				action = channel.getManager().setDefaultLayout(layout);
 				break;
 			case RESET:
 			case DELETE:
-				action = channel.getManager().setDefaultReaction(null);
+				action = channel.getManager().setDefaultLayout(ForumChannel.Layout.DEFAULT_VIEW);
 				break;
 			default:
 				return;
