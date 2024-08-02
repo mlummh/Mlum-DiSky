@@ -62,11 +62,11 @@ public class BotManager {
             bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
             final JDA jda = bot.getInstance();
 
-            if (DiSky.getConfiguration().getOrSetDefault("stop-bots-gracefully", false)) {
+            if (ConfigManager.get("stop-bots-gracefully", false)) {
                 jda.shutdown();
                 DiSky.debug("Trying to shutdown gracefully bot " + bot.getName() + "...");
                 try {
-                    if (!jda.awaitShutdown(DiSky.getConfiguration().getOrSetDefault("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
+                    if (!jda.awaitShutdown(ConfigManager.get("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
                         DiSky.debug("Unable to shutdown gracefully bot " + bot.getName() + "! We'll force shutdown it!");
                         jda.shutdownNow();
                     } else
