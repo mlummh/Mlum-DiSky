@@ -8,7 +8,6 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.sections.SecLoop;
 import ch.njol.skript.sections.SecWhile;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
@@ -16,6 +15,7 @@ import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.JDAUtils;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -34,8 +34,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
 
 public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteractionEvent> {
 
@@ -75,7 +73,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 	@Override
 	public boolean check(@NotNull Event event) {
 		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().isFromGuild()) return false;
-		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+		if (!((BukkitSlashCompletionEvent) event).getInteractionEvent().getGuild().getId().equals(ConfigManager.get("GuildID", null))) {
 			return false;
 		}
 		return super.check(event);

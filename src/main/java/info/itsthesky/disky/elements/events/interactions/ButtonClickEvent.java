@@ -2,12 +2,12 @@ package info.itsthesky.disky.elements.events.interactions;
 
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -77,7 +77,7 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 	public boolean check(@NotNull Event event) {
 		if (!super.check(event)) return false;
 		if (!((BukkitButtonClickEvent) event).isFromGuild()) return globalEvent;
-		if (!((BukkitButtonClickEvent) event).getJDAEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+		if (!((BukkitButtonClickEvent) event).getJDAEvent().getGuild().getId().equals(ConfigManager.get("GuildID", null))) {
 			return globalEvent;
 		}
 		return !globalEvent;

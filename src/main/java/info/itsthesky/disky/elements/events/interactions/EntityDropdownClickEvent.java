@@ -5,13 +5,13 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.MultipleGetterExpression;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -73,7 +73,7 @@ public class EntityDropdownClickEvent extends DiSkyEvent<EntitySelectInteraction
 	@Override
 	public boolean check(@NotNull Event event) {
 		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().isFromGuild()) return false;
-		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+		if (!((BukkitDropdownClickEvent) event).getInteractionEvent().getGuild().getId().equals(ConfigManager.get("GuildID", null))) {
 			return false;
 		}
 		return super.check(event);

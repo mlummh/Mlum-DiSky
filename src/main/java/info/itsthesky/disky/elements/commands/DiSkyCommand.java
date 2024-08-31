@@ -9,6 +9,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.BukkitEvent;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -86,7 +87,7 @@ public class DiSkyCommand extends SkriptEvent {
     @Override
     public boolean check(@NotNull Event event) {
         if (!((EvtDiSkyCommand) event).jdaEvent.isFromGuild()) return false;
-        if (!((EvtDiSkyCommand) event).jdaEvent.getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+        if (!((EvtDiSkyCommand) event).jdaEvent.getGuild().getId().equals(ConfigManager.get("GuildID", null))) {
             return ((EvtDiSkyCommand) event).command.getCategory().equals("global") || ((EvtDiSkyCommand) event).command.getCategory().equals("global only");
         }
         return !((EvtDiSkyCommand) event).command.getCategory().equals("global only");

@@ -1,10 +1,10 @@
 package info.itsthesky.disky.elements.events.interactions;
 
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -58,7 +58,7 @@ public class ModalSendEvent extends DiSkyEvent<ModalInteractionEvent> {
 	@Override
 	public boolean check(@NotNull Event event) {
 		if (!((BukkitModalSendEvent) event).getInteractionEvent().isFromGuild()) return false;
-		if (!((BukkitModalSendEvent) event).getInteractionEvent().getGuild().getId().equals(DiSky.getConfiguration().getString("GuildID"))) {
+		if (!((BukkitModalSendEvent) event).getInteractionEvent().getGuild().getId().equals(ConfigManager.get("GuildID", null))) {
 			return false;
 		}
 		return super.check(event);
