@@ -3,11 +3,8 @@ package info.itsthesky.disky.api.skript.reflects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.SimpleGetterExpression;
-import info.itsthesky.disky.elements.events.interactions.MessageCommandEvent;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.dv8tion.jda.api.entities.Message;
 import org.bukkit.event.Event;
 
 import java.util.concurrent.atomic.AtomicInteger;

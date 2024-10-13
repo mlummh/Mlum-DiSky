@@ -2,7 +2,6 @@ package info.itsthesky.disky.elements.structures.slash;
 
 import info.itsthesky.disky.elements.structures.slash.models.ParsedGroup;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.lang.structure.Structure;
 
 import java.util.ArrayList;
 import java.util.List;

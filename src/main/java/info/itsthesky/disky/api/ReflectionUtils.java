@@ -5,7 +5,6 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.ExpressionInfo;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SyntaxElementInfo;
-import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
