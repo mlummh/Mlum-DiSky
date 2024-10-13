@@ -5,7 +5,10 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ParseContext;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
@@ -13,10 +16,8 @@ import ch.njol.skript.util.Timespan;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
-import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -68,6 +69,9 @@ public class CommandFactory {
             e.printStackTrace();
         }
         List<Argument<?>> arguments = command.getArguments();
+        if (res == null)
+            return false;
+
         /* if (res == null)
         {
             // try custom parser

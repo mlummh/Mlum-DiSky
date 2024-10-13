@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'idea'
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
@@ -7,7 +8,7 @@ group = 'info.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '18'
+def minor = '20'
 def patch = '0'
 
 def channel = ''
@@ -34,7 +35,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.1'
+    implementation 'net.dv8tion:JDA:5.1.2'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
@@ -45,7 +46,7 @@ shadowJar {
     minimize()
 }
 
-def targetJavaVersion = 11
+def targetJavaVersion = 16
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -72,6 +73,13 @@ processResources {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 1, 'minutes'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 compileJava.options.encoding = 'UTF-8'

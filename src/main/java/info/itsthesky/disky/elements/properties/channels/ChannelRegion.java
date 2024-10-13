@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements.properties.channels;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
 import net.dv8tion.jda.api.Region;
@@ -29,18 +28,20 @@ public class ChannelRegion extends ActionProperty<GuildChannel, ChannelAction, R
     }
 
     @Override
-    public void change(GuildChannel role, Region value) {
-        ((AudioChannel) role).getManager().setRegion(value).queue();
+    public void change(GuildChannel role, Region value, boolean async) {
+        var action = ((AudioChannel) role).getManager().setRegion(value);
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
     public ChannelAction change(ChannelAction action, Region value) {
-        Skript.warning("You cannot change the voice channel region before its discord creation!");
-        return action;
+        return action.setRegion(value);
     }
 
     @Override
-    public Region get(GuildChannel role) {
+    public Region get(GuildChannel role, boolean async) {
         return ((AudioChannel) role).getRegion();
     }
 

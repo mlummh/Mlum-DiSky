@@ -3,8 +3,8 @@ package info.itsthesky.disky.elements.properties.channels;
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +28,13 @@ public class ChannelTopic extends ActionProperty<GuildChannel, ChannelAction, St
     }
 
     @Override
-    public void change(GuildChannel channel, String value) {
+    public void change(GuildChannel channel, String value, boolean async) {
         if (channel == null || channel instanceof ForumChannel)
             return;
 
-        ((StandardGuildMessageChannel) channel).getManager().setTopic(value).queue();
+        var action = ((StandardGuildMessageChannel) channel).getManager().setTopic(value);
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -41,7 +43,7 @@ public class ChannelTopic extends ActionProperty<GuildChannel, ChannelAction, St
     }
 
     @Override
-    public String get(GuildChannel channel) {
+    public String get(GuildChannel channel, boolean async) {
         if (channel instanceof ForumChannel)
             return ((ForumChannel) channel).getTopic();
 

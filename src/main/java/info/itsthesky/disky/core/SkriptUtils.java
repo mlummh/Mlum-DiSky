@@ -256,6 +256,8 @@ public final class SkriptUtils {
     }
 
     public static void error(Node node, String message) {
+        DiSkyRuntimeHandler.error(new Exception(message), node);
+
         final Node previous = ParserInstance.get().getNode();
         ParserInstance.get().setNode(node);
         Skript.error(message);
@@ -297,7 +299,7 @@ public final class SkriptUtils {
             return true;
 
         final String message = "Unable to validate the snowflake ID '" + input + "': " + errorMess;
-        DiSkyRuntimeHandler.error(new Exception(message), node);
+        DiSkyRuntimeHandler.error(new IllegalArgumentException(message), node);
         return false;
     }
 

@@ -2,8 +2,8 @@ package info.itsthesky.disky.elements.properties.channels;
 
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,11 @@ public class ChannelSlowmode extends ActionProperty<GuildChannel, ChannelAction,
     }
 
     @Override
-    public void change(GuildChannel role, Number value) {
-        ((TextChannel) role).getManager().setSlowmode(value.intValue()).queue();
+    public void change(GuildChannel role, Number value, boolean async) {
+        var action = ((TextChannel) role).getManager().setSlowmode(value.intValue());
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ChannelSlowmode extends ActionProperty<GuildChannel, ChannelAction,
     }
 
     @Override
-    public Number get(GuildChannel role) {
+    public Number get(GuildChannel role, boolean async) {
         return ((TextChannel) role).getSlowmode();
     }
 

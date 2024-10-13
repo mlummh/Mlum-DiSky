@@ -2,6 +2,7 @@ package info.itsthesky.disky.core;
 
 import ch.njol.skript.lang.TriggerItem;
 import info.itsthesky.disky.BotApplication;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.elements.events.bots.BotStopEvent;
 import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
 import net.dv8tion.jda.api.JDA;
@@ -76,9 +77,13 @@ public class BotOptions {
 
     public void runShutdown(ShutdownEvent event) {
         if (getOnShutdown().isEmpty())
+        {
+            DiSky.debug("No shutdown event defined for bot " + getName());
             return;
+        }
         final BotStopEvent.BukkitShutdownEvent e = new BotStopEvent.BukkitShutdownEvent(new BotStopEvent());
         e.setJDAEvent(event);
+        DiSky.debug("Running shutdown event for bot " + getName());
         TriggerItem.walk(getOnShutdown().get(0), e);
     }
 
