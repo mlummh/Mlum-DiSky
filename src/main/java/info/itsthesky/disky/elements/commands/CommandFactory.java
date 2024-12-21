@@ -5,10 +5,8 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ParseContext;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.VariableString;
+import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
@@ -62,9 +60,9 @@ public class CommandFactory {
 
     public boolean parseArguments(String args, CommandObject command, Event event) {
         SkriptParser parser = new SkriptParser(args, SkriptParser.PARSE_LITERALS, ParseContext.COMMAND);
-        SkriptParser.ParseResult res = null;
+        ParseResult res = null;
         try {
-            res = (SkriptParser.ParseResult) PARSE_I.invoke(parser, command.getPattern());
+            res = (ParseResult) PARSE_I.invoke(parser, command.getPattern());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

@@ -5,16 +5,13 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Color;
-import ch.njol.skript.util.ColorRGB;
-import ch.njol.skript.util.Date;
-import ch.njol.skript.util.Getter;
+import ch.njol.skript.util.*;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
@@ -22,7 +19,6 @@ import info.itsthesky.disky.api.events.EventValue;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
-import info.itsthesky.disky.elements.events.ExprEventValues;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -131,7 +127,7 @@ public final class SkriptUtils {
                     }
 
                     @Override
-                    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+                    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
                         return true;
                     }
                 };
@@ -235,6 +231,12 @@ public final class SkriptUtils {
             return null;
         return new ColorRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}
+
+    public static java.awt.Color convert(Color color) {
+        if (color == null)
+            return null;
+        return new java.awt.Color(color.asBukkitColor().getRed(), color.asBukkitColor().getGreen(), color.asBukkitColor().getBlue());
+    }
 
 	@SafeVarargs
     public static Class<? extends Event>[] addEventClasses(Class<? extends Event>... classes) {

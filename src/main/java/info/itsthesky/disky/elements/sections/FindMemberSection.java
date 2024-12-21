@@ -6,6 +6,7 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.function.FunctionEvent;
 import ch.njol.skript.lang.function.Functions;
 import ch.njol.skript.lang.function.ScriptFunction;
@@ -58,7 +59,7 @@ public class FindMemberSection extends Section {
     private boolean iterationResult = false;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
         exprGuild = (Expression<Guild>) expressions[0];
         exprResult = (Expression<Object>) expressions[1];
         exprValue = (Expression<Object>) expressions[2];
@@ -158,7 +159,7 @@ public class FindMemberSection extends Section {
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+        public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
             if (instance != null) {
                 section = instance;
                 value = exprs[0];

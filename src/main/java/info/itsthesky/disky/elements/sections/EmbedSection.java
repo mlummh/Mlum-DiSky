@@ -5,9 +5,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.TriggerItem;
+import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
 import info.itsthesky.disky.api.skript.ReturningSection;
@@ -72,7 +71,7 @@ public class EmbedSection extends ReturningSection<EmbedBuilder> {
     public boolean init(Expression<?>[] exprs,
                         int matchedPattern,
                         @NotNull Kleenean isDelayed,
-                        @NotNull SkriptParser.ParseResult parseResult,
+                        @NotNull ParseResult parseResult,
                         @Nullable SectionNode sectionNode,
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];

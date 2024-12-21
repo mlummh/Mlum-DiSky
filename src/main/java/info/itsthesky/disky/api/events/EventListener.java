@@ -1,6 +1,8 @@
 package info.itsthesky.disky.api.events;
 
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -13,16 +15,16 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 /**
- * Made by Blitz, minor edit by Sky for DiSky
+ * Made by Blitz, edited by Sky for DiSky
  */
-public class EventListener<T> extends ListenerAdapter {
+public class EventListener<T> {
 
-    public final static ArrayList<EventListener<?>> listeners = new ArrayList<>();
     public boolean enabled = true;
     private final Class<T> clazz;
     private final BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer;
     private final Predicate<T> checker;
 
+    private final @Nullable String specificBotName;
     private final boolean isWaitingLogEvent;
     private final @Nullable ActionType logType;
     private final Predicate<GuildAuditLogEntryCreateEvent> logChecker;
@@ -32,28 +34,17 @@ public class EventListener<T> extends ListenerAdapter {
     public EventListener(Class<T> paramClass,
                          BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer,
                          Predicate<T> checker, Predicate<GuildAuditLogEntryCreateEvent> logChecker,
-                         @Nullable ActionType actionType) {
+                         @Nullable ActionType actionType, @Nullable String specificBotName) {
         this.clazz = paramClass;
         this.consumer = consumer;
         this.checker = checker;
         this.logChecker = logChecker;
+        this.specificBotName = specificBotName;
 
         this.isWaitingLogEvent = actionType != null;
         this.logType = actionType;
     }
 
-    public static void addListener(EventListener<?> listener) {
-        removeListener(listener);
-        listeners.add(listener);
-        DiSky.getManager().registerGlobalListener(listener);
-    }
-
-    public static void removeListener(EventListener<?> listener) {
-        listeners.remove(listener);
-        DiSky.getManager().execute(bot -> bot.getInstance().removeEventListener(listener));
-    }
-
-    @Override
     public void onGuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent event) {
         DiSky.debug("received log event " + event.getEntry().getType() + " by DiSky.");
         if (isWaitingLogEvent && event.getEntry().getType() == logType) {
@@ -71,7 +62,6 @@ public class EventListener<T> extends ListenerAdapter {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public void onGenericEvent(@NotNull GenericEvent event) {
         if (enabled && clazz.isInstance(event)) {
             DiSky.debug("Event " + event.getClass().getSimpleName() + " received by DiSky. Is it valid? " + checker.test((T) event) + "." + hash());
@@ -86,8 +76,11 @@ public class EventListener<T> extends ListenerAdapter {
         }
     }
 
-    private String hash() {
+    public String hash() {
         return " [class hash: " + this.hashCode() + "]";
     }
 
+    public Class<T> getClazz() {
+        return clazz;
+    }
 }

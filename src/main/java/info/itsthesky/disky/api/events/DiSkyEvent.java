@@ -3,9 +3,11 @@ package info.itsthesky.disky.api.events;
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.CoreEventListener;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.bukkit.event.Event;
@@ -77,8 +79,8 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull SkriptParser.ParseResult parser) {
+     @SuppressWarnings("unchecked")
+    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull ParseResult parser) {
         bot = (String) (exprs[0] == null ? null : exprs[0].getSingle());
 
         bukkitClass = (Class<? extends Event>) Arrays.stream(this.getClass().getDeclaredClasses())
@@ -147,16 +149,15 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 }
 
             }
-        }, checker(), logChecker(), getLogType());
-        EventListener.addListener(listener);
-        return super.postLoad();
+        }, checker(), logChecker(), getLogType(), bot);
+        CoreEventListener.addListener(listener);
     }
 
     @Override
     public void unload() {
         if (listener != null) {
             listener.enabled = false;
-            EventListener.removeListener(listener);
+            CoreEventListener.removeListener(listener);
         }
 
         listener = null;

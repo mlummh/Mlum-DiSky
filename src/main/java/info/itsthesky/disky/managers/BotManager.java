@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  */
 public class BotManager {
 
-    private final LinkedList<EventListener<?>> queuedListeners = new LinkedList<>();
     private boolean anyBotEnabled = false;
     private final JavaPlugin plugin;
 
@@ -52,7 +51,7 @@ public class BotManager {
         bot.getInstance().addEventListener(new ReactionListener());
         bot.getInstance().addEventListener(new MessageManager(bot));
         bot.getInstance().addEventListener(new MemberRemoveEventListener());
-        bot.getInstance().addEventListener(queuedListeners.toArray());
+        bot.getInstance().addEventListener(new CoreEventListener(bot));
     }
 
     public void shutdown() {
@@ -139,13 +138,6 @@ public class BotManager {
                 .collect(Collectors.toSet());
         bots.clear();
         bots.addAll(set);
-    }
-
-    public void registerGlobalListener(EventListener<?> listener) {
-        if (anyBotEnabled)
-            execute(bot -> bot.getInstance().addEventListener(listener));
-        else
-            queuedListeners.add(listener);
     }
 
     public Bot getBotByName(String name) {
