@@ -19,6 +19,7 @@ import info.itsthesky.disky.api.skript.AsyncEffectSection;
 import info.itsthesky.disky.api.skript.BetterExpressionEntryData;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
+import info.itsthesky.disky.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
