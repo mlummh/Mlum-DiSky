@@ -5,7 +5,6 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -147,17 +146,9 @@ public abstract class WaiterEffect<T> extends EasyElement {
 
         if (getNext() != null) {
             Bukkit.getScheduler().runTask(Skript.getInstance(), () -> { // Walk to next item synchronously
-                Object timing = null;
-                if (SkriptTimings.enabled()) { // getTrigger call is not free, do it only if we must
-                    Trigger trigger = getTrigger();
-                    if (trigger != null)
-                        timing = SkriptTimings.start(trigger.getDebugLabel());
-                }
-
                 if (localVars != null)
                     Variables.setLocalVariables(e, localVars);
                 TriggerItem.walk(getNext(), e);
-                SkriptTimings.stop(timing); // Stop timing if it was even started
             });
         }
 

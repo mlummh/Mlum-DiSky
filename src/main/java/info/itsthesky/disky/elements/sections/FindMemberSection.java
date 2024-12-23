@@ -12,7 +12,6 @@ import ch.njol.skript.lang.function.Functions;
 import ch.njol.skript.lang.function.ScriptFunction;
 import ch.njol.skript.log.RetainingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -121,17 +120,8 @@ public class FindMemberSection extends Section {
             // Restarts the following code
             if (getNext() != null) {
                 Bukkit.getScheduler().runTask(Skript.getInstance(), () -> {
-                    Object timing = null;
-                    if (SkriptTimings.enabled()) {
-                        Trigger trigger = getTrigger();
-                        if (trigger != null) {
-                            timing = SkriptTimings.start(trigger.getDebugLabel());
-                        }
-                    }
-
                     TriggerItem.walk(getNext(), e);
                     Variables.removeLocals(e);
-                    SkriptTimings.stop(timing);
                 });
             } else {
                 Variables.removeLocals(e);
