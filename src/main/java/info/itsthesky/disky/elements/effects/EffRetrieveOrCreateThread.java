@@ -17,16 +17,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class EffRetriveOrCreateThread extends Effect {
+public class EffRetrieveOrCreateThread extends Effect {
 
     static {
-        Skript.registerEffect(EffRetriveOrCreateThread.class,
-                "retrieve thread named %string% from %object% and store it in %object%");
+        Skript.registerEffect(EffRetrieveOrCreateThread.class,
+                "retrieve thread named %string% from %object% and store it in %object%",
+                "retrieve open thread named %string% from %object% and store it in %object%");
     }
 
     private Expression<String> threadName;
     private Expression<Object> channelString;
     private Variable<Object> varStore;
+
+    private boolean onlyOpenThreads;
 
     /**
      * Called just after the constructor.
@@ -44,6 +47,7 @@ public class EffRetriveOrCreateThread extends Effect {
         threadName = (Expression<String>) expressions[0];
         channelString = (Expression<Object>) expressions[1];
         varStore = (Variable<Object>) expressions[2];
+        onlyOpenThreads = matchedPattern == 1;
         return true;
     }
 
@@ -53,45 +57,48 @@ public class EffRetriveOrCreateThread extends Effect {
      * @param event The event with which this effect will be executed
      */
     @Override
-    protected void execute(Event event) {
-        final Bot bot = getBot();
-        if (bot == null) {
-            DiSky.getErrorHandler().exception(event, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
-            return;
-        }
+    protected void execute(@NotNull Event event) {
+        try {
+            final Bot bot = getBot();
+            if (bot == null) {
+                DiSky.getErrorHandler().exception(event, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
+                return;
+            }
 
-        String threadName = Objects.requireNonNull(this.threadName.getSingle(event));
+            String threadName = Objects.requireNonNull(this.threadName.getSingle(event));
+            TextChannel channel;
 
-        Object channelExpr = channelString.getSingle(event);
-        String channelID;
-        if (channelExpr == null) {
-            DiSky.getErrorHandler().exception(event, new RuntimeException("Channel was null"));
-            return;
-        } else if (channelExpr instanceof String) {
-            channelID = (String) channelExpr;
-        } else if (channelExpr.getClass().isAssignableFrom(TextChannel.class)) {
-            channelID = ((TextChannel) channelExpr).getId();
-        } else {
-            DiSky.getErrorHandler().exception(event, new RuntimeException("Channel expression was not a Text Channel or Discord ID"));
-            return;
-        }
+            Object channelExpr = channelString.getSingle(event);
 
-        TextChannel channel = bot.getInstance().getTextChannelById(channelID);
+            if (channelExpr == null) {
+                DiSky.getErrorHandler().exception(event, new RuntimeException("Channel was null"));
+                return;
+            }
 
-        if (channel == null) {
-            DiSky.getErrorHandler().exception(event, new RuntimeException("No channel with id " + channelString.getSingle(event)));
-            return;
-        }
+            if (channelExpr instanceof String) {
+                channel = bot.getInstance().getTextChannelById((String) channelExpr);
+            } else if (channelExpr instanceof TextChannel) {
+                channel = ((TextChannel) channelExpr);
+            } else {
+                DiSky.getErrorHandler().exception(event, new RuntimeException("Channel expression was not a Text Channel or Discord ID"));
+                return;
+            }
 
-        ThreadChannel thread = getAndOpenThread(threadName, channel);
+            if (channel == null) {
+                DiSky.getErrorHandler().exception(event, new RuntimeException("No channel with id " + channelString.getSingle(event)));
+                return;
+            }
 
-        if (thread != null) {
+            ThreadChannel thread = getAndOpenThread(threadName, channel);
+
+            if (thread == null) {
+                thread = channel.createThreadChannel(threadName).complete();
+            }
+
             saveThread(event, thread);
-            return;
+        } catch (NullPointerException ex){
+            DiSky.getErrorHandler().exception(event, ex);
         }
-
-        thread = channel.createThreadChannel(threadName).complete();
-        saveThread(event, thread);
     }
 
     public @Nullable Bot getBot() {
@@ -118,6 +125,11 @@ public class EffRetriveOrCreateThread extends Effect {
                 return t;
             }
         }
+
+        if (onlyOpenThreads) {
+            return null;
+        }
+
         for (ThreadChannel t: channel.retrieveArchivedPublicThreadChannels()) {
             if (t.getName().equals(threadName)) {
                 return t;
